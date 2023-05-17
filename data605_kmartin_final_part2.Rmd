@@ -1,0 +1,468 @@
+---
+title: "DATA 605 - Final Exam (Part II)"
+author: "Kory Martin"
+date: "2023-05-10"
+output: 
+  html_document:
+    toc: true
+---
+
+## Setup
+
+You are to register for Kaggle.com (free) and compete in the House Prices: Advanced Regression Techniques competition.  https://www.kaggle.com/c/house-prices-advanced-regression-techniques .  I want you to do the following.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+library(tidyverse)
+library(janitor)
+library(matrixcalc)
+library(corrplot)
+
+
+training_data <- read_delim('/Users/korymartin/Library/Mobile Documents/com~apple~CloudDocs/Grad Programs/CUNY SPS/DATA 605/Final Exam/train.csv')
+
+training_data <- clean_names(training_data)
+
+
+```
+
+
+## Problem 1 - Descriptive and Inferential Statistics. 
+
+- Provide univariate descriptive statistics and appropriate plots for the training data set.  
+- Provide a scatterplot matrix for at least two of the independent variables and the dependent variable. 
+- Derive a correlation matrix for any three quantitative variables in the dataset.  
+- Test the hypotheses that the correlations between each pairwise set of variables is 0 and provide an 80% confidence interval.  
+- Discuss the meaning of your analysis.  
+- Would you be worried about familywise error? Why or why not?
+
+### Provide univariate descriptive statistics and appropriate plots for the training data set.  
+
+```{r}
+summary(training_data)
+
+```
+
+
+```{r}
+hist(training_data$overall_qual)
+plot(training_data$overall_qual, training_data$sale_price)
+
+hist(training_data$year_built)
+plot(training_data$year_built, training_data$sale_price)
+
+hist(training_data$year_remod_add)
+plot(training_data$year_remod_add, training_data$sale_price)
+
+hist(training_data$bsmt_fin_sf1)
+plot(training_data$bsmt_fin_sf1, training_data$sale_price)
+
+hist(training_data$total_bsmt_sf)
+plot(training_data$total_bsmt_sf, training_data$sale_price)
+
+hist(training_data$x1st_flr_sf)
+plot(training_data$x1st_flr_sf, training_data$sale_price)
+
+hist(training_data$x2nd_flr_sf)
+plot(training_data$x2nd_flr_sf, training_data$sale_price)
+
+hist(training_data$gr_liv_area)
+plot(training_data$gr_liv_area, training_data$sale_price)
+
+hist(training_data$full_bath)
+plot(training_data$full_bath, training_data$sale_price)
+
+hist(training_data$tot_rms_abv_grd)
+plot(training_data$tot_rms_abv_grd, training_data$sale_price)
+
+hist(training_data$fireplaces)
+plot(training_data$fireplaces, training_data$sale_price)
+
+hist(training_data$garage_cars)
+plot(training_data$garage_cars, training_data$sale_price)
+
+hist(training_data$garage_area)
+plot(training_data$garage_area, training_data$sale_price)
+
+hist(training_data$wood_deck_sf)
+plot(training_data$wood_deck_sf, training_data$sale_price)
+
+hist(training_data$open_porch_sf)
+plot(training_data$open_porch_sf, training_data$sale_price)
+```
+
+```{r}
+training_data %>% select_if(., is.character) %>% str()
+```
+
+
+```{r}
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=ms_zoning, y=sale_price))
+
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=street, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=lot_shape, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=land_contour, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=utilities, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=lot_config, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=land_slope, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=neighborhood, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=condition1, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=condition2, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=bldg_type, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=house_style, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=roof_style, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=exterior1st, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=exterior2nd, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=exter_qual, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=exter_cond, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=heating, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=heating_qc, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=central_air, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=electrical, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=kitchen_qual, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=functional, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=garage_type, y=sale_price))
+
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=garage_finish, y=sale_price))
+
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=sale_type, y=sale_price))
+
+ggplot(training_data) +
+  geom_boxplot(aes(x=sale_condition, y=sale_price))
+
+```
+
+### Provide a scatterplot matrix for at least two of the independent variables and the dependent variable. 
+```{r}
+
+d1 <- training_data %>% 
+  select(sale_price, garage_area, x1st_flr_sf)
+
+plot(d1, pch=20 , cex=1.5 , col="purple")
+
+```
+
+### Derive a correlation matrix for any three quantitative variables in the dataset.
+```{r}
+
+num_items = ncol(d1)
+
+cor_data <- c()
+
+for(i in seq(num_items)) {
+  for(j in seq(num_items)) {
+    cor_data <- c(cor_data,cor(d1[[i]],d1[[j]]))
+    
+  }
+}
+
+corr_matrix <- matrix(cor_data, ncol=num_items, nrow=num_items)
+
+```
+
+### Test the hypotheses that the correlations between each pairwise set of variables is 0 and provide an 80% confidence interval.
+```{r}
+
+cor.test(d1$sale_price, d1$garage_area, conf.level=0.80)
+cor.test(d1$sale_price, d1$x1st_flr_sf, conf.level=0.80)
+cor.test(d1$garage_area, d1$x1st_flr_sf, conf.level=0.80)
+
+
+```
+
+### Discuss the meaning of your analysis.  
+
+
+### Would you be worried about familywise error? Why or why not?
+
+
+## Problem 2 - Linear Algebra and Correlation.  
+
+- Invert your correlation matrix from above. (This is known as the precision matrix and contains variance inflation factors on the diagonal.) 
+- Multiply the correlation matrix by the precision matrix, and then multiply the precision matrix by the correlation matrix. 
+- Conduct LU decomposition on the matrix.  
+
+```{r}
+
+prec_matrix <- solve(corr_matrix)
+
+cp <- corr_matrix %*% prec_matrix
+pc <- prec_matrix %*% corr_matrix
+
+lu_decomp <- lu.decomposition(corr_matrix)
+
+l <- lu_decomp$L
+u <- lu_decomp$U
+
+lu <- l %*% u
+
+corr_matrix == lu
+
+```
+
+## Problem 3 - Calculus-Based Probability & Statistics.  
+
+Many times, it makes sense to fit a closed form distribution to data.  
+- Select a variable in the Kaggle.com training dataset that is skewed to the right, shift it so that the minimum value is absolutely above zero if necessary.  
+- Then load the MASS package and run fitdistr to fit an exponential probability density function. (See  [https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/fitdistr.html](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/fitdistr.html)).  
+- Find the optimal value of $\lambda$ for this distribution, and then take 1000 samples from this exponential distribution using this value (e.g., rexp(1000, $\lambda$)).  
+- Plot a histogram and compare it with a histogram of your original variable.   
+- Using the exponential pdf, find the 5th and 95th percentiles using the cumulative distribution function (CDF).
+- Also generate a 95% confidence interval from the empirical data, assuming normality.  
+- Finally, provide the empirical 5th percentile and 95th percentile of the data.  
+- Discuss.
+
+### Select a variable in the Kaggle.com training dataset that is skewed to the right, shift it so that the minimum value is absolutely above zero if necessary.  
+
+This variable has a minimum value of 1300 
+
+```{r}
+
+ggplot(training_data) +
+  geom_histogram(aes(x=lot_area), fill='white', color='black', bins=50)
+
+lot_area <- training_data %>% select(lot_area)
+
+summary(lot_area)
+
+```
+
+### Then load the MASS package and run fitdistr to fit an exponential probability density function. (See  https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/fitdistr.html ).  
+
+
+```{r}
+
+lot_area_dist <- MASS::fitdistr(lot_area$lot_area, densfun = 'exponential')
+
+```
+
+### Find the optimal value of $\lambda$ for this distribution, and then take 1000 samples from this exponential distribution using this value (e.g., rexp(1000, $\lambda$)).  
+
+```{r}
+
+lambda_opt <- lot_area_dist$estimate
+
+set.seed(51323)
+
+sample_dist <- rexp(1000,lambda_opt)
+
+```
+
+
+### Plot a histogram and compare it with a histogram of your original variable.   
+
+```{r}
+hist(training_data$lot_area)
+
+hist(sample_dist)
+
+```
+
+
+### Using the exponential pdf, find the 5th and 95th percentiles using the cumulative distribution function (CDF).
+
+```{r}
+
+qexp(.05, lambda_opt)
+qexp(.95, lambda_opt)
+
+```
+
+
+### Also generate a 95% confidence interval from the empirical data, assuming normality.  
+
+```{r}
+
+x <- mean(lot_area$lot_area)
+std_dev <- sd(lot_area$lot_area)
+n <- length(lot_area$lot_area)
+z_score <- qnorm(.975)
+
+(lower_limit <- x - (z_score*(std_dev/sqrt(n))))
+(upper_limit <- x+(z_score*(std_dev/sqrt(n))))
+```
+
+
+### Finally, provide the empirical 5th percentile and 95th percentile of the data.  
+
+```{r}
+
+quantile(lot_area$lot_area, probs=c(0.05, 0.95))
+
+```
+
+
+### Discuss.
+
+
+## Problem 4 - Modeling
+
+- Build some type of multiple regression  model and submit your model to the competition board.  
+- Provide your complete model summary and results with analysis.  
+- Report your Kaggle.com user name and score. Provide a screen snapshot of your score with your name identifiable.
+
+
+### Build some type of multiple regression  model and submit your model to the competition board.  
+```{r}
+
+
+sp_quantiles <- quantile(training_data$sale_price)
+sp_quantiles
+
+
+IQR <- sp_quantiles[[4]]-sp_quantiles[[2]]
+upper_limit <- sp_quantiles[[4]] + 1.5*IQR
+lower_limit <- sp_quantiles[[2]] - 1.5*IQR
+
+
+training_adj <- training_data %>% filter(between(sale_price, lower_limit, upper_limit))
+
+```
+
+
+```{r}
+training_corr <- cor(training_adj %>% select_if(is.numeric))
+
+training_corr <- round(training_corr, digits=2)
+
+sales_corr <- training_corr[,'sale_price']
+
+sales_corr
+```
+
+
+
+### Build Model
+
+For my model, I used the earlier correlation plot as well as the various plots showing the relationship between sales price and the different categorical and numerical variables as a basis for determining which variables to include in the model. Ultimately, this was a pretty manual and tedious process. 
+
+```{r}
+
+training_adj <- training_adj %>% mutate(overall_qual = as.factor(overall_qual))
+training_adj <- training_adj %>% mutate(garage_cars = as.factor(garage_cars))
+training_adj <- training_adj %>% mutate(year_built_cat = case_when(
+  year_built < 1980~'pre_1980',
+  TRUE ~ 'post_1980'
+)) 
+training_adj <- training_adj %>% mutate(full_bath = as.factor(full_bath))
+training_adj <- training_adj %>% mutate(tot_rms_abv_grd = as.factor(tot_rms_abv_grd))
+training_adj <- training_adj %>% mutate(has_2nd_flr = ifelse(x2nd_flr_sf == 0,'no','yes')) 
+
+
+m3 <- lm(sale_price ~ overall_qual + log(gr_liv_area) + garage_cars + 
+           year_built_cat + full_bath + total_bsmt_sf + x1st_flr_sf +
+           (has_2nd_flr)*(x2nd_flr_sf) + tot_rms_abv_grd + 
+           kitchen_qual + electrical + central_air + exter_qual +
+           exter_cond + heating + sale_type, 
+         data=training_adj)
+
+```
+
+### Provide your complete model summary and results with analysis. 
+
+
+```{r}
+summary(m3)
+
+
+par(mfrow=c(1,1))
+plot(m3)
+
+hist(resid(m3))
+```
+Overall my model used a mix of continuous variables and categorical variables. Additionally I include one log-transformed term and an interaction term. The model had Adjusted R-Squared of 08216, and the p-value for the F-Statistic was significantly smaller than .05, so we can assume the model is a good model.
+
+When looking at the residual plots, we see that the residuals appear to be normally distributed and there doesn't to be any significant patterns in the residuals, thus concluding that our model doesn't suffer from heteroskedasity. Therefore we conclude that our model is a pretty good model for predicting sales prices for homes.  
+
+### Predict on Test Data and submit Results to Kaggle
+
+Ran the model on the test data set to generate predictions, and then imported the final sales price predictions to Kaggle
+
+```{r}
+test_data <- read_delim('/Users/korymartin/Library/Mobile Documents/com~apple~CloudDocs/Grad Programs/CUNY SPS/DATA 605/Final Exam/train.csv')
+
+test_data <- clean_names(test_data)
+
+test_data <- test_data %>% mutate(overall_qual = as.factor(overall_qual))
+test_data <- test_data %>% mutate(garage_cars = as.factor(garage_cars))
+test_data <- test_data %>% mutate(year_built_cat = case_when(
+  year_built < 1980~'pre_1980',
+  TRUE ~ 'post_1980'
+)) 
+test_data <- test_data %>% mutate(full_bath = as.factor(full_bath))
+test_data <- test_data %>% mutate(tot_rms_abv_grd = as.factor(tot_rms_abv_grd))
+test_data <- test_data %>% mutate(has_2nd_flr = ifelse(x2nd_flr_sf == 0,'no','yes'))
+
+predict.y <- predict(m3, test_data)
+actual.y <- test_data$sale_price
+
+test_data2 <- tibble(cbind(test_data, data.frame(predict.y)))
+
+seq_count <- seq(1459)
+
+test_data2 <- test_data2 %>% select(id, predict.y) %>% rename(SalePrice = predict.y, Id = id)
+test_data2 <- test_data2 %>% drop_na(SalePrice)
+test_data2 <- cbind(test_data2, seq_count)
+test_data2 <- tibble(test_data2)
+test_data2 <- test_data2 %>% mutate(Id = (seq_count+1460)) 
+test_data2 <- test_data2 %>% select(Id, SalePrice)
+
+write_csv(test_data2, './test_data2.csv')
+```
+
+

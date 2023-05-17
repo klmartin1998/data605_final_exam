@@ -1,0 +1,237 @@
+---
+title: "DATA 605 - Final Exam (Part I)"
+author: "Kory Martin"
+date: "2023-05-12"
+output: 
+  html_document:
+    toc: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Setup
+
+### Probability Density 1:  X~Gamma 
+
+Using R, generate a random variable X that has 10,000 random Gamma pdf values. A Gamma pdf is completely describe by n (a size parameter) and lambda ($\lambda$ , a shape parameter).  Choose any n greater 3 and an expected value $\lambda$ between 2 and 10 (you choose).  
+
+```{r}
+set.seed(51023)
+
+n = 10000
+shape = 5
+lambda = 3
+
+x_gamma <- rgamma(n=n,shape=shape, rate=lambda)
+
+```
+
+### Probability Density 2: Y~Sum of Exponentials
+Then generate 10,000 observations from  the sum of n exponential pdfs with rate/shape parameter ($\lambda$). The n and $\lambda$ must be the same as in the previous case.
+
+```{r}
+set.seed(51323)
+y1_exponential <- rexp(n,lambda)
+
+set.seed(51324)
+y2_exponential <- rexp(n,lambda)
+
+set.seed(51325)
+y3_exponential <- rexp(n,lambda)
+
+set.seed(51326)
+y4_exponential <- rexp(n,lambda)
+
+set.seed(51327)
+y5_exponential <- rexp(n,lambda)
+
+y_exponential <- y1_exponential + y2_exponential + y3_exponential + y4_exponential + y5_exponential
+```
+
+### Probability Density 3:  Z~ Exponential  
+Then generate 10,000 observations from  a single exponential pdf with rate/shape parameter ($\lambda$). 
+
+NOTE: The Gamma distribution is quite common in data science.  For example, it is used to model failures for multiple processes when each of those processes has the same failure rate.  The exponential is used for constant failure rates, service times, etc.  
+
+```{r}
+set.seed(5152023)
+z_exponential <- rexp(n, lambda)
+
+```
+
+## Problem 1.  
+Calculate the empirical expected value (means) and variances of all three pdfs.  
+
+
+```{r}
+mean(x_gamma)
+var(x_gamma)
+```
+```{r}
+mean(y_exponential)
+var(y_exponential)
+```
+```{r}
+mean(z_exponential)
+var(z_exponential)
+```
+
+## Problem 2.
+
+*This is an area of the course that I struggled with. I still don't fully understand the Calculus portion as it pertains to probabilities and expected values, variance, and moment generating functions*
+
+Using calculus, calculate the expected value and variance of the Gamma pdf (X).  
+
+$E(X) = \int_{0}^{\infty} x\frac{\lambda^\alpha}{\Gamma(\alpha)}x^{\alpha-1}e^{-\lambda x}dx$
+
+Substituting for $\alpha = 5$; and $\lambda=3$, we then get: 
+
+$E(X) = \int_{0}^{\infty} x\frac{3^5}{\Gamma(5)}x^{5-1}e^{-3 x}dx$
+
+This further simplifies to:
+
+$E(X) = \int_{0}^{\infty} \frac{3^5}{\Gamma(5)}x^{(5+1)-1}e^{-3 x}dx$
+
+
+Using the moment generating function for exponentials, calculate the expected value of the single exponential (Z) and the sum of exponentials (Y)
+
+
+##  Problem 3.  
+For pdf Z (the exponential), calculate empirically probabilities a through c.  Then evaluate through calculus whether the memoryless property holds. 
+
+a. $P(Z>\lambda | Z>\frac{\lambda}{2})$		
+b. $P(Z>2\lambda |Z>\lambda)$	
+c. $P(Z>3\lambda| Z>\lambda)$ 
+
+\
+
+### $P(Z>\lambda | Z>\frac{\lambda}{2})$
+```{r}
+
+x_a <- lambda
+x_b <- lambda/2
+
+f_xa <- lambda*exp((-lambda)*(x_a))
+f_xb <- lambda*exp((-lambda)*(x_b))
+
+prob_a <- length(z_exponential[z_exponential > f_xa])/length(z_exponential)
+prob_b <- length(z_exponential[z_exponential > f_xb])/length(z_exponential)
+
+list_a <- z_exponential[z_exponential > f_xa]
+list_ba <- list_a[list_a < f_xb]
+
+prob_ba <- length(list_ba)/length(list_a)
+
+
+prob_ab <- ((prob_ba)*(prob_a))/prob_b
+
+prob_ab
+```
+
+### $P(Z>2\lambda |Z>\lambda)$		
+```{r}
+
+x_a <- 2*lambda
+x_b <- lambda
+
+f_xa <- lambda*exp((-lambda)*(x_a))
+f_xb <- lambda*exp((-lambda)*(x_b))
+
+prob_a <- length(z_exponential[z_exponential > f_xa])/length(z_exponential)
+prob_b <- length(z_exponential[z_exponential > f_xb])/length(z_exponential)
+
+list_a <- z_exponential[z_exponential > f_xa]
+list_ba <- list_a[list_a < f_xb]
+
+prob_ba <- length(list_ba)/length(list_a)
+
+
+prob_ab <- ((prob_ba)*(prob_a))/prob_b
+
+prob_ab
+
+```
+
+### $P(Z>3\lambda| Z>\lambda)$		
+```{r}
+
+x_a <- 3*lambda
+x_b <- lambda
+
+f_xa <- lambda*exp((-lambda)*(x_a))
+f_xb <- lambda*exp((-lambda)*(x_b))
+
+prob_a <- length(z_exponential[z_exponential > f_xa])/length(z_exponential)
+prob_b <- length(z_exponential[z_exponential > f_xb])/length(z_exponential)
+
+list_a <- z_exponential[z_exponential > f_xa]
+list_ba <- list_a[list_a < f_xb]
+
+prob_ba <- length(list_ba)/length(list_a)
+
+
+prob_ab <- ((prob_ba)*(prob_a))/prob_b
+
+prob_ab
+
+```
+
+
+## Problem 4.
+Loosely investigate whether P(YZ) = P(Y) P(Z) by building a table with quartiles and evaluating the marginal and joint probabilities.
+	
+```{r}
+quantiles_y <- quantile(y_exponential)
+quantiles_z <- quantile(z_exponential)
+
+prod_quantiles = c()
+
+for(y_quantile in 1:4) {
+  for(z_quantile in 1:4) {
+    
+    yz <- quantiles_y[[y_quantile+1]] * quantiles_z[[z_quantile+1]]
+    #print(yz)
+    prod_quantiles <- c(prod_quantiles,yz)
+  }
+}
+
+prod_quantiles_matrix <- matrix(prod_quantiles, nrow=4, ncol=4,byrow=FALSE)
+
+col_sums <- colSums(prod_quantiles_matrix)
+row_sums <- rowSums(prod_quantiles_matrix)
+
+sum_of_cols = sum(col_sums)
+sum_of_rows = sum(row_sums)
+
+round(sum_of_cols) == round(sum_of_rows)
+```
+
+## Problem 5.
+
+Check to see if independence holds by using Fisher’s Exact Test and the Chi Square Test.  
+
+### Chi-Squared
+
+```{r}
+
+chisq.test(prod_quantiles_matrix)
+
+```
+### Fisher's Exact Test
+
+
+```{r}
+fisher.test(prod_quantiles_matrix)
+```
+
+Using both Fisher's Exact Test and Chi-Squared, we see that the test for independence holds.
+
+### What is the difference between the two? Which is most appropriate?
+
+The difference between the two tests is that Chi-Squared is a non-parametric test that allows you for use without any specific assumptions about the distribution that the data is drawn from. Additionally, the Chi-Squared test is prone to errors when working with smaller sample sizes. On the other hand, with the Fisher's Exact Test, it does not use an approximation and as a result its validity holds, even for smaller sample sizes.
+
+In this case, I believe that the Fisher's Exact Test is the most appropriate test to use for our data. 
