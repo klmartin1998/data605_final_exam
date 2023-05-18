@@ -28,6 +28,7 @@ lambda = 3
 
 x_gamma <- rgamma(n=n,shape=shape, rate=lambda)
 
+head(x_gamma)
 ```
 
 ### Probability Density 2: Y~Sum of Exponentials
@@ -50,6 +51,8 @@ set.seed(51327)
 y5_exponential <- rexp(n,lambda)
 
 y_exponential <- y1_exponential + y2_exponential + y3_exponential + y4_exponential + y5_exponential
+
+head(y_exponential)
 ```
 
 ### Probability Density 3:  Z~ Exponential  
@@ -61,6 +64,7 @@ NOTE: The Gamma distribution is quite common in data science.  For example, it i
 set.seed(5152023)
 z_exponential <- rexp(n, lambda)
 
+head(z_exponential)
 ```
 
 ## Problem 1.  
@@ -107,9 +111,13 @@ a. $P(Z>\lambda | Z>\frac{\lambda}{2})$
 b. $P(Z>2\lambda |Z>\lambda)$	
 c. $P(Z>3\lambda| Z>\lambda)$ 
 
+
 \
 
+For each of these conditional probabilities, we are focused on solved P(A|B) using the identity that $P(A|B) = \frac{P(B|A)P(A)}{P(B)}$. Additionally, we solve for the probability density P(X) using the formula $f(x) = \lambda e^{-\lambda x}$
+
 ### $P(Z>\lambda | Z>\frac{\lambda}{2})$
+
 ```{r}
 
 x_a <- lambda
@@ -185,8 +193,8 @@ prob_ab
 Loosely investigate whether P(YZ) = P(Y) P(Z) by building a table with quartiles and evaluating the marginal and joint probabilities.
 	
 ```{r}
-quantiles_y <- quantile(y_exponential)
-quantiles_z <- quantile(z_exponential)
+(quantiles_y <- quantile(y_exponential))
+(quantiles_z <- quantile(z_exponential))
 
 prod_quantiles = c()
 
@@ -199,7 +207,7 @@ for(y_quantile in 1:4) {
   }
 }
 
-prod_quantiles_matrix <- matrix(prod_quantiles, nrow=4, ncol=4,byrow=FALSE)
+(prod_quantiles_matrix <- matrix(prod_quantiles, nrow=4, ncol=4,byrow=FALSE))
 
 col_sums <- colSums(prod_quantiles_matrix)
 row_sums <- rowSums(prod_quantiles_matrix)
@@ -207,7 +215,7 @@ row_sums <- rowSums(prod_quantiles_matrix)
 sum_of_cols = sum(col_sums)
 sum_of_rows = sum(row_sums)
 
-round(sum_of_cols) == round(sum_of_rows)
+(round(sum_of_cols) == round(sum_of_rows))
 ```
 
 ## Problem 5.

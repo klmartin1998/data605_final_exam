@@ -11,7 +11,7 @@
 
 <meta name="author" content="Kory Martin" />
 
-<meta name="date" content="2023-04-22" />
+<meta name="date" content="2023-05-12" />
 
 <title>DATA 605 - Final Exam (Part I)</title>
 
@@ -352,7 +352,7 @@ display: none;
 
 <h1 class="title toc-ignore">DATA 605 - Final Exam (Part I)</h1>
 <h4 class="author">Kory Martin</h4>
-<h4 class="date">2023-04-22</h4>
+<h4 class="date">2023-05-12</h4>
 
 </div>
 
@@ -403,7 +403,10 @@ n = 10000
 shape = 5
 lambda = 3
 
-x_gamma &lt;- rgamma(n=n,shape=shape, rate=lambda)</code></pre>
+x_gamma &lt;- rgamma(n=n,shape=shape, rate=lambda)
+
+head(x_gamma)</code></pre>
+<pre><code>## [1] 2.0502233 0.4307308 1.1192294 1.5410472 1.1542016 0.6988969</code></pre>
 </div>
 <div id="probability-density-2-ysum-of-exponentials" class="section level3">
 <h3>Probability Density 2: Y~Sum of Exponentials</h3>
@@ -425,7 +428,10 @@ y4_exponential &lt;- rexp(n,lambda)
 set.seed(51327)
 y5_exponential &lt;- rexp(n,lambda)
 
-y_exponential &lt;- y1_exponential + y2_exponential + y3_exponential + y4_exponential + y5_exponential</code></pre>
+y_exponential &lt;- y1_exponential + y2_exponential + y3_exponential + y4_exponential + y5_exponential
+
+head(y_exponential)</code></pre>
+<pre><code>## [1] 1.5936518 1.8291070 1.2697119 2.1948992 0.8308876 1.4988129</code></pre>
 </div>
 <div id="probability-density-3-z-exponential" class="section level3">
 <h3>Probability Density 3: Z~ Exponential</h3>
@@ -436,7 +442,10 @@ example, it is used to model failures for multiple processes when each
 of those processes has the same failure rate. The exponential is used
 for constant failure rates, service times, etc.</p>
 <pre class="r"><code>set.seed(5152023)
-z_exponential &lt;- rexp(n, lambda)</code></pre>
+z_exponential &lt;- rexp(n, lambda)
+
+head(z_exponential)</code></pre>
+<pre><code>## [1] 0.31903999 0.02936884 0.33178521 0.33271694 0.06073430 0.03785072</code></pre>
 </div>
 </div>
 <div id="problem-1." class="section level2">
@@ -495,6 +504,10 @@ Z&gt;\lambda)\)</span></li>
 </ol>
 <p><br />
 </p>
+<p>For each of these conditional probabilities, we are focused on solved
+P(A|B) using the identity that <span class="math inline">\(P(A|B) =
+\frac{P(B|A)P(A)}{P(B)}\)</span>. Additionally, we solve for the
+probability density P(X) using the formula <span class="math inline">\(f(x) = \lambda e^{-\lambda x}\)</span></p>
 <div id="pzlambda-zfraclambda2" class="section level3">
 <h3><span class="math inline">\(P(Z&gt;\lambda |
 Z&gt;\frac{\lambda}{2})\)</span></h3>
@@ -569,10 +582,13 @@ prob_ab</code></pre>
 <h2>Problem 4.</h2>
 <p>Loosely investigate whether P(YZ) = P(Y) P(Z) by building a table
 with quartiles and evaluating the marginal and joint probabilities.</p>
-<pre class="r"><code>quantiles_y &lt;- quantile(y_exponential)
-quantiles_z &lt;- quantile(z_exponential)
-
-prod_quantiles = c()
+<pre class="r"><code>(quantiles_y &lt;- quantile(y_exponential))</code></pre>
+<pre><code>##        0%       25%       50%       75%      100% 
+## 0.0949479 1.1384496 1.5752271 2.1157600 5.9639041</code></pre>
+<pre class="r"><code>(quantiles_z &lt;- quantile(z_exponential))</code></pre>
+<pre><code>##           0%          25%          50%          75%         100% 
+## 4.199778e-05 9.511661e-02 2.316999e-01 4.567086e-01 3.110112e+00</code></pre>
+<pre class="r"><code>prod_quantiles = c()
 
 for(y_quantile in 1:4) {
   for(z_quantile in 1:4) {
@@ -583,15 +599,19 @@ for(y_quantile in 1:4) {
   }
 }
 
-prod_quantiles_matrix &lt;- matrix(prod_quantiles, nrow=4, ncol=4,byrow=FALSE)
-
-col_sums &lt;- colSums(prod_quantiles_matrix)
+(prod_quantiles_matrix &lt;- matrix(prod_quantiles, nrow=4, ncol=4,byrow=FALSE))</code></pre>
+<pre><code>##           [,1]      [,2]      [,3]       [,4]
+## [1,] 0.1082855 0.1498303 0.2012439  0.5672663
+## [2,] 0.2637787 0.3649800 0.4902214  1.3818361
+## [3,] 0.5199397 0.7194197 0.9662857  2.7237661
+## [4,] 3.5407062 4.8991334 6.5802513 18.5484121</code></pre>
+<pre class="r"><code>col_sums &lt;- colSums(prod_quantiles_matrix)
 row_sums &lt;- rowSums(prod_quantiles_matrix)
 
 sum_of_cols = sum(col_sums)
 sum_of_rows = sum(row_sums)
 
-round(sum_of_cols) == round(sum_of_rows)</code></pre>
+(round(sum_of_cols) == round(sum_of_rows))</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="problem-5." class="section level2">

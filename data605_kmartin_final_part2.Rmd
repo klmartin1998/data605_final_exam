@@ -36,8 +36,6 @@ training_data <- clean_names(training_data)
 - Provide a scatterplot matrix for at least two of the independent variables and the dependent variable. 
 - Derive a correlation matrix for any three quantitative variables in the dataset.  
 - Test the hypotheses that the correlations between each pairwise set of variables is 0 and provide an 80% confidence interval.  
-- Discuss the meaning of your analysis.  
-- Would you be worried about familywise error? Why or why not?
 
 ### Provide univariate descriptive statistics and appropriate plots for the training data set.  
 
@@ -45,7 +43,14 @@ training_data <- clean_names(training_data)
 summary(training_data)
 
 ```
+Here we look at the histogram for our dependent variable sale_price
 
+```{r}
+hist(training_data$sale_price)
+
+```
+
+Next we take a look at histograms and scatter plots for each of the continuous variables as well as the relationship between the different continuous variables and sale_price
 
 ```{r}
 hist(training_data$overall_qual)
@@ -94,10 +99,13 @@ hist(training_data$open_porch_sf)
 plot(training_data$open_porch_sf, training_data$sale_price)
 ```
 
+Next we get a list of the charater or categorical variables in the training data
+
 ```{r}
 training_data %>% select_if(., is.character) %>% str()
 ```
 
+And we then look at boxplots of the sale_price based on several different categorical variables
 
 ```{r}
 
@@ -211,7 +219,7 @@ for(i in seq(num_items)) {
   }
 }
 
-corr_matrix <- matrix(cor_data, ncol=num_items, nrow=num_items)
+(corr_matrix <- matrix(cor_data, ncol=num_items, nrow=num_items))
 
 ```
 
@@ -225,10 +233,6 @@ cor.test(d1$garage_area, d1$x1st_flr_sf, conf.level=0.80)
 
 ```
 
-### Discuss the meaning of your analysis.  
-
-
-### Would you be worried about familywise error? Why or why not?
 
 
 ## Problem 2 - Linear Algebra and Correlation.  
@@ -346,8 +350,6 @@ quantile(lot_area$lot_area, probs=c(0.05, 0.95))
 
 ```
 
-
-### Discuss.
 
 
 ## Problem 4 - Modeling
